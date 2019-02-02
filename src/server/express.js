@@ -1,25 +1,21 @@
-import express from "express";
-import path from "path";
+import express from 'express';
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
 
 const server = express();
 
-const webpack = require("webpack");
-const config = require("../../config/webpack.dev.js");
+const config = require('../../config/webpack.dev.js');
+
 const compiler = webpack(config);
 
-const webpackDevMiddleware = require("webpack-dev-middleware")(
+server.use(webpackDevMiddleware(
   compiler,
-  config.devServer
-);
+  config.devServer,
+));
+server.use(webpackHotMiddleware(compiler));
 
-const webpackHotMiddleware = require("webpack-hot-middleware")(
-  compiler
-)
-
-server.use(webpackDevMiddleware);
-server.use(webpackHotMiddleware);
-
-const staticMiddleware = express.static("dist");
+const staticMiddleware = express.static('dist');
 
 server.use(staticMiddleware);
 
